@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8" />
+<title>Futbol Formasi Muallif: Karimov Xayot</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+:root {
+  --bg-dark: #0d0d0d;
+  --text-light: #fff;
+  --kit-main-color: #0066b2;
+  --kit-sleeve-color: #e31b23;
+  --kit-collar-color: #e31b23;  
+  --kit-text-color: #fff;
+  --kit-number-color: #fff;
+  --kit-font: "Arial Black", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-dark);
+  color: var(--text-light);
+  font-family: system-ui, Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.kit-container {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.controls {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.form-group input, .form-group select {
+  padding: 8px 12px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #222;
+  color: #fff;
+}
+
+/* --- NAME TEXT WRAPPING + AUTO-UPPERCASE DISPLAY --- */
+.kit-name {
+  font-family: var(--kit-font);
+  font-size: 24px;
+  color: var(--kit-text-color);
+  text-transform: uppercase; /* faqat ko‘rsatishda kattalashtiramiz */
+  text-shadow:
+    2px 2px 0 rgba(0,0,0,0.3),
+    -1px -1px 0 rgba(0,0,0,0.3),
+    1px -1px 0 rgba(0,0,0,0.3),
+    -1px 1px 0 rgba(0,0,0,0.3),
+    1px 1px 0 rgba(0,0,0,0.3);
+  padding: 0 20px;
+  text-align: center;
+  /* uzun matnlar uchun: */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  line-height: 1.1;
+  max-width: 100%;
+  word-wrap: break-word; /* eski alias */
+  word-break: break-word; /* kengroq qo‘llab-quvvatlash uchun */
+}
+
+/* qolganlari o‘sha-o‘sha */
+.kit-viewer {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  perspective: 1000px;
+}
+
+.kit-3d {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.kit-3d.show-back {
+  transform: rotateY(180deg);
+}
+
+.kit-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  background: var(--kit-main-color);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.2);
+}
+
+.kit-front {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.kit-back {
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Yenglar */
+.kit-sleeve-left, .kit-sleeve-right {
+  position: absolute;
+  top: 12%;
+  width: 22%;
+  height: 28%;
+  background: var(--kit-sleeve-color);
+  border-radius: 50% 50% 40% 40%;
+  transform: skewY(8deg);
+  z-index: 1;
+}
+
+.kit-sleeve-left { left: -4%; }
+.kit-sleeve-right { right: -4%; }
+
+/* Bo'yin qismi */
+.kit-collar {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30%;
+  height: 12%;
+  background: var(--kit-collar-color);
+  border-radius: 0 0 15px 15px;
+  z-index: 1;
+}
+
+/* Emblem */
+.kit-crest-container {
+  width: 80px;
+  height: 80px;
+  margin-top: 20px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 3px solid rgba(0,0,0,0.2);
+  z-index: 2;
+}
+
+.kit-crest {
+  font-weight: bold;
+  font-size: 24px;
+  color: #000;
+}
+
+/* Sponsor */
+.kit-sponsor-logo {
+  position: absolute;
+  bottom: 20%;
+  font-family: var(--kit-font);
+  font-size: 18px;
+  color: var(--kit-text-color);
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+/* Raqamlar */
+.kit-number {
+  font-family: var(--kit-font);
+  font-size: 80px;
+  font-weight: bold;
+  color: var(--kit-number-color);
+  text-shadow:
+    3px 3px 0 rgba(0,0,0,0.3),
+    -1px -1px 0 rgba(0,0,0,0.3),
+    1px -1px 0 rgba(0,0,0,0.3),
+    -1px 1px 0 rgba(0,0,0,0.3),
+    1px 1px 0 rgba(0,0,0,0.3);
+  margin-bottom: 10px;
+}
+
+.kit-front-number {
+  font-family: var(--kit-font);
+  font-size: 40px;
+  color: var(--kit-number-color);
+  margin-top: auto;
+  margin-bottom: 30px;
+  text-shadow:
+    2px 2px 0 rgba(0,0,0,0.3),
+    -1px -1px 0 rgba(0,0,0,0.3),
+    1px -1px 0 rgba(0,0,0,0.3),
+    -1px 1px 0 rgba(0,0,0,0.3),
+    1px 1px 0 rgba(0,0,0,0.3);
+  z-index: 2;
+}
+
+/* Tugmachalar */
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  background: #00c853;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover { opacity: 0.9; }
+
+.view-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.view-toggle button {
+  background: #333;
+  color: #fff;
+}
+
+.view-toggle button.active {
+  background: #00c853;
+  color: #000;
+}
+</style>
+</head>
+<body>
+<div class="kit-container">
+  <div class="controls">
+    <div class="form-group">
+      <label for="playerName">Futbolchi Ismi</label>
+      <!-- maxlength olib tashlandi; datalist qo‘shildi -->
+      <input id="playerName" type="text" placeholder="Ism yozing misol Uchun Xayot . . ." list="playerNameList">
+      <!-- takliflar, ixtiyoriy -->
+      <datalist id="playerNameList">
+        <option value="Messi"></option>
+        <option value="Ronaldo"></option>
+        <option value="Neymar"></option>
+        <option value="Mbappe"></option>
+        <option value="Haaland"></option>
+        <option value="Benzema"></option>
+        <option value="Lewandowski"></option>
+        <option value="Salah"></option>
+      </datalist>
+    </div>
+    
+    <div class="form-group">
+      <label for="playerNumber">Forma Raqami</label>
+      <input id="playerNumber" type="number" min="1" max="99" placeholder="10">
+    </div>
+    
+    <div class="form-group">
+      <label for="teamSelect">Jamoa</label>
+      <select id="teamSelect">
+        <option value="barca">Barcelona</option>
+        <option value="real">Real Madrid</option>
+        <option value="manu">Manchester United</option>
+        <option value="liverpool">Liverpool</option>
+        <option value="juve">Juventus</option>
+        <option value="chelsea">Chelsea</option>
+        <option value="psg">PSG</option>
+        <option value="bayern">Bayern Munich</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="kitStyle">Forma Turi</label>
+      <select id="kitStyle">
+        <option value="home">Uy formasi</option>
+        <option value="away">Safar formasi</option>
+        <option value="third">3-chi forma</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="view-toggle">
+    <button id="viewFrontBtn" class="active">Old tomondan</button>
+    <button id="viewBackBtn">Orqa tomondan</button>
+  </div>
+  
+  <div class="kit-viewer">
+    <div id="kit3d" class="kit-3d">
+      <div class="kit-face kit-front">
+        <div class="kit-sleeve-left"></div>
+        <div class="kit-sleeve-right"></div>
+        <div class="kit-collar"></div>
+        <div class="kit-crest-container">
+          <div id="kitCrest" class="kit-crest">FCB</div>
+        </div>
+        <div class="kit-sponsor-logo">NIKE</div>
+        <div id="kitFrontNumber" class="kit-front-number">10</div>
+      </div>
+      <div class="kit-face kit-back">
+        <div class="kit-sleeve-left"></div>
+        <div class="kit-sleeve-right"></div>
+        <div class="kit-collar"></div>
+        <div id="kitNumber" class="kit-number">10</div>
+        <div id="kitName" class="kit-name">ISM</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="buttons">
+    <button id="downloadBtn">Yuklab olish</button>
+    <button id="randomBtn">Tasodifiy forma</button>
+  </div>
+</div>
+
+<script>
+// Jamoalar ma'lumotlari (o‘zgarmadi)
+const TEAMS = {
+  barca: {
+    name: "Barcelona",
+    home: { main: "#a50044", sleeve: "#004d98", text: "#ffd700", crest: "FCB" },
+    away: { main: "#004d98", sleeve: "#a50044", text: "#ffd700", crest: "FCB" },
+    third: { main: "#000000", sleeve: "#ffd700", text: "#ffd700", crest: "FCB" }
+  },
+  real: {
+    name: "Real Madrid",
+    home: { main: "#ffffff", sleeve: "#e0e0e0", text: "#001970", crest: "RM" },
+    away: { main: "#001970", sleeve: "#ffffff", text: "#ffffff", crest: "RM" },
+    third: { main: "#000000", sleeve: "#8a0303", text: "#ffffff", crest: "RM" }
+  },
+  manu: {
+    name: "Manchester United",
+    home: { main: "#DA291C", sleeve: "#000000", text: "#ffffff", crest: "MU" },
+    away: { main: "#000000", sleeve: "#DA291C", text: "#ffffff", crest: "MU" },
+    third: { main: "#ffffff", sleeve: "#DA291C", text: "#000000", crest: "MU" }
+  },
+  liverpool: {
+    name: "Liverpool",
+    home: { main: "#C8102E", sleeve: "#00B2A9", text: "#ffffff", crest: "LFC" },
+    away: { main: "#00B2A9", sleeve: "#C8102E", text: "#ffffff", crest: "LFC" },
+    third: { main: "#000000", sleeve: "#C8102E", text: "#ffffff", crest: "LFC" }
+  },
+  juve: {
+    name: "Juventus",
+    home: { main: "#ffffff", sleeve: "#000000", text: "#000000", crest: "JUV" },
+    away: { main: "#000000", sleeve: "#ffffff", text: "#ffffff", crest: "JUV" },
+    third: { main: "#8a0303", sleeve: "#F0E800", text: "#ffffff", crest: "JUV" }
+  },
+  chelsea: {
+    name: "Chelsea",
+    home: { main: "#034694", sleeve: "#0a0a0a", text: "#ffffff", crest: "CFC" },
+    away: { main: "#ffffff", sleeve: "#034694", text: "#034694", crest: "CFC" },
+    third: { main: "#0a0a0a", sleeve: "#034694", text: "#ffffff", crest: "CFC" }
+  },
+  psg: {
+    name: "Paris Saint-Germain",
+    home: { main: "#004170", sleeve: "#da0b2d", text: "#ffffff", crest: "PSG" },
+    away: { main: "#ffffff", sleeve: "#004170", text: "#004170", crest: "PSG" },
+    third: { main: "#000000", sleeve: "#da0b2d", text: "#ffffff", crest: "PSG" }
+  },
+  bayern: {
+    name: "Bayern Munich",
+    home: { main: "#DC052D", sleeve: "#0066B2", text: "#ffffff", crest: "FCB" },
+    away: { main: "#0066B2", sleeve: "#DC052D", text: "#ffffff", crest: "FCB" },
+    third: { main: "#000000", sleeve: "#DC052D", text: "#ffffff", crest: "FCB" }
+  }
+};
+
+// DOM elementlari
+const nameInput = document.getElementById('playerName');
+const numberInput = document.getElementById('playerNumber');
+const teamSelect = document.getElementById('teamSelect');
+const kitStyleSelect = document.getElementById('kitStyle');
+const viewFrontBtn = document.getElementById('viewFrontBtn');
+const viewBackBtn = document.getElementById('viewBackBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const randomBtn = document.getElementById('randomBtn');
+const kit3d = document.getElementById('kit3d');
+const kitCrest = document.getElementById('kitCrest');
+const kitName = document.getElementById('kitName');
+const kitNumber = document.getElementById('kitNumber');
+const kitFrontNumber = document.getElementById('kitFrontNumber');
+const root = document.documentElement;
+
+// ism uzunligini hisoblab shriftni moslash
+function fitNameFont(txt) {
+  const len = txt.length;
+  let size = 24;
+  if (len > 12) size = 20;
+  if (len > 16) size = 18;
+  if (len > 20) size = 16;
+  if (len > 24) size = 14;
+  kitName.style.fontSize = size + 'px';
+}
+
+// Formani yangilash
+function updateKit() {
+  const rawName = nameInput.value.trim(); // foydalanuvchi nima yozsa — o‘sha
+  const name = rawName || "ISM";
+  const number = numberInput.value.trim() || "10";
+  const teamId = teamSelect.value;
+  const kitStyle = kitStyleSelect.value;
+  
+  const team = TEAMS[teamId];
+  const kit = team[kitStyle];
+  
+  // Ranglarni o'rnatish
+  root.style.setProperty('--kit-main-color', kit.main);
+  root.style.setProperty('--kit-sleeve-color', kit.sleeve);
+  root.style.setProperty('--kit-collar-color', kit.sleeve);
+  root.style.setProperty('--kit-text-color', kit.text);
+  root.style.setProperty('--kit-number-color', kit.text);
+  
+  // Matnlarni o'rnatish
+  kitName.textContent = name;          // text-transform CSS orqali
+  kitNumber.textContent = number;
+  kitFrontNumber.textContent = number;
+  kitCrest.textContent = kit.crest;
+
+  fitNameFont(name);
+}
+
+// Ko'rinishni o'zgartirish
+viewFrontBtn.addEventListener('click', () => {
+  kit3d.classList.remove('show-back');
+  viewFrontBtn.classList.add('active');
+  viewBackBtn.classList.remove('active');
+});
+
+viewBackBtn.addEventListener('click', () => {
+  kit3d.classList.add('show-back');
+  viewBackBtn.classList.add('active');
+  viewFrontBtn.classList.remove('active');
+});
+
+// Inputlarni tinglash (jonli)
+nameInput.addEventListener('input', updateKit);
+numberInput.addEventListener('input', updateKit);
+teamSelect.addEventListener('change', updateKit);
+kitStyleSelect.addEventListener('change', updateKit);
+
+// Tasodifiy forma
+randomBtn.addEventListener('click', () => {
+  const teams = Object.keys(TEAMS);
+  const randomTeam = teams[Math.floor(Math.random() * teams.length)];
+  const styles = ['home', 'away', 'third'];
+  const randomStyle = styles[Math.floor(Math.random() * styles.length)];
+  
+  teamSelect.value = randomTeam;
+  kitStyleSelect.value = randomStyle;
+  
+  // Endi ismni foydalanuvchi yozganicha qoldiramiz! 
+  // (Agar baribir tasodifiy ism kerak bo‘lsa, pastdagi kodni qayta yoqing.)
+  /*
+  const names = ["MESSI", "RONALDO", "NEYMAR", "MBAPPE", "HAALAND", "BENZEMA", "LEWANDOWSKI", "SALAH"];
+  const randomName = names[Math.floor(Math.random() * names.length)];
+  nameInput.value = randomName;
+  */
+
+  const randomNumber = Math.floor(Math.random() * 99) + 1;
+  numberInput.value = randomNumber;
+  
+  updateKit();
+});
+
+// Yuklab olish
+downloadBtn.addEventListener('click', () => {
+  alert("Yuklab olish funksiyasi ishga tushirildi!");
+});
+
+// Dastlabki yuklash
+updateKit();
+</script>
+<script src="./main.js"></script>
+</body>
+</html>
